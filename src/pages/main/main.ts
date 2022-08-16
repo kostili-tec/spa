@@ -3,7 +3,7 @@ import Page from "../../core/templates/page";
 class MainPage extends Page {
   
   static TextObject = {
-    MainTitle: 'Main Page 1',
+    MainTitle: 'Main Page',
   };
 
   constructor(id: string) {
