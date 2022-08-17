@@ -2,6 +2,8 @@ import MainPage from "../main/main";
 import Page from "../../core/templates/page";
 import SettingsPage from "../settings/settings";
 import StatisticsPage from "../statistics/statistics";
+import Header from "../../core/components/header/header";
+import ErrorPage, { ErrorTypes } from "../error/error";
 
 export const enum PageIds {
   MainPage = 'main-page',
@@ -11,10 +13,16 @@ export const enum PageIds {
 
 class App {
   private static container: HTMLElement = document.body;
+  private static defaultPageId: string = 'current-page';
   private initialPage: MainPage;
+  private header: Header;
 
   static renderNewPage(idPage: string) {
-    App.container.innerHTML = '';
+    // App.container.innerHTML = '';
+    const currentPageHTML = document.querySelector(`#${this.defaultPageId}`);
+    if (currentPageHTML) {
+      currentPageHTML.remove();
+    }
     let page: Page | null = null;
 
     if (idPage === PageIds.MainPage) {
@@ -23,10 +31,13 @@ class App {
       page = new SettingsPage(idPage);
     } else if (idPage === PageIds.StatisticsPage) {
       page = new StatisticsPage(idPage);
+    } else {
+      page = new ErrorPage(idPage, ErrorTypes.Error_404);
     }
     
     if (page) {
       const pageHTML = page.render();
+      pageHTML.id = this.defaultPageId;
       App.container.append(pageHTML);
     } 
   }
@@ -39,10 +50,12 @@ class App {
 
 
   constructor() {    
-    this.initialPage = new MainPage('main-page')
+    this.initialPage = new MainPage('main-page');
+    this.header = new Header('header', 'header-container');
   }
 
   run() {
+    App.container.append(this.header.render());
     App.renderNewPage('main-page');
     this.enableRouteChange();
   }
